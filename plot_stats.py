@@ -7,8 +7,8 @@ import utils
 stat_name = sys.argv[1]
 
 # Input parameters
-country_codes = ['ESP', 'EST', 'ETH', 'USA']
-dem_names = ['AW3D30', 'HydroSHEDS', 'MERIT', 'NASADEM', 'TanDEM']
+country_codes = ['ESP', 'USA', 'EST', 'ETH']
+dem_names = ['AW3D30', 'COP30', 'HydroSHEDS', 'MERIT', 'NASADEM', 'TanDEM']
 feature_types = ['basin', 'stream']
 
 # Create and save plots based on input statistic

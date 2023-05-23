@@ -5,7 +5,7 @@ import utils
 
 # Get input dictionary for slope statistics
 country_codes = ['ESP', 'EST', 'ETH', 'USA']
-dem_names = ['AW3D30', 'HydroSHEDS', 'MERIT', 'NASADEM', 'TanDEM']
+dem_names = ['AW3D30', 'COP30', 'HydroSHEDS', 'MERIT', 'NASADEM', 'TanDEM']
 feature_types = ['basin', 'stream']
 stats_input = []
 for country_code in country_codes:

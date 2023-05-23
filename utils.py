@@ -305,7 +305,10 @@ def calc_mean_sinuosity(fp: object) -> float:
 
 # Get sinuosity statistics
 def get_sinuosity_stats(country_code: object, dem_name: object):
-    fp_to_streams = f'D:/dem_comparison/data/{country_code}/streams/{dem_name}.shp'
+    if dem_name == 'COP30':
+        fp_to_streams = f'D:/dem_comparison/data/{country_code}/streams/{dem_name}.gpkg'
+    else:
+        fp_to_streams = f'D:/dem_comparison/data/{country_code}/streams/{dem_name}.shp'
     fp_to_ref = get_fp_to_ref(fp=fp_to_streams)
     sinuosity = calc_mean_sinuosity(fp=fp_to_streams)
     ref_sinuosity = calc_mean_sinuosity(fp=fp_to_ref)
@@ -355,18 +358,12 @@ def classify_forest_pct(row):
     return forest_class
 
 
-# Get HEX code based on color name used in R
-def get_hex_code(color_name: object) -> object:
-    color_dict = {
-        'dodgerblue3': '#1874CD',
-        'magenta2': '#EE00EE',
-        'goldenrod2': '#EEB422',
-        'seagreen3': '#43CD80',
-        'tomato2': '#EE5C42',
-        'bisque4': '#8B7D6B',
-        'snow4': '#8B8989'
-    }
-    return color_dict.get(color_name)
+# Get HEX code based on DEM name
+def get_hex_code(dem_name: object) -> object:
+    dem_names = ['AW3D30', 'COP30', 'HydroSHEDS', 'MERIT', 'NASADEM', 'TanDEM']
+    hex_codes = ['#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2']
+    color_dict = dict(zip(dem_names, hex_codes))
+    return color_dict.get(dem_name)
 
 
 # Get catchment name based on country code
@@ -384,6 +381,7 @@ def get_catchment_name(country_code: object) -> object:
 def read_stats(country_code: object, dem_name: object, feature_type: object, stat_name: object) -> pd.DataFrame:
     fp = get_fp_to_stats(country_code=country_code, dem_name=dem_name, feature_type=feature_type, stat_name=stat_name)
     stats = pd.read_csv(fp)
+    stats['catchment_name'] = get_catchment_name(country_code)
     return stats
 
 
@@ -448,8 +446,7 @@ def plot_stat_vs_dist(
         country_code: object, dem_names: list, feature_type: object, stat_name: object, ax: plt.Axes) -> plt.Axes:
     merged = merge_stats_for_plot(country_code, dem_names, feature_type, stat_name)
     merged[f'{stat_name}_class'] = merged.apply(get_class_func(stat_name), axis=1)
-    color_names = ['magenta2', 'goldenrod2', 'seagreen3', 'tomato2', 'snow4']
-    palette = sns.color_palette([get_hex_code(color_name) for color_name in color_names])
+    palette = sns.color_palette([get_hex_code(dem_name) for dem_name in dem_names])
     sns.boxplot(
         y='dist_to_ref', x=f'{stat_name}_class', data=merged, hue='dem_name', ax=ax, showfliers=False,
         palette=palette
@@ -480,9 +477,10 @@ def subplots_to_png(
             if ax != fig.axes[-1]:
                 ax.get_legend().remove()
         handles, labels = ax.get_legend_handles_labels()
+        labels[-1] = 'TanDEM-X'
         ax.get_legend().remove()
         fig.legend(
-            handles, labels, loc='lower center', ncol=5, title='DEM', bbox_to_anchor=(0.5, -0.1), title_fontsize=16,
+            handles, labels, loc='lower center', ncol=6, bbox_to_anchor=(0.5, -0.1), title_fontsize=16,
             fontsize=16
         )
     for ax in fig.axes:

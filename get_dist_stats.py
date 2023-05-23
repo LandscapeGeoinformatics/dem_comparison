@@ -5,7 +5,7 @@ import utils
 
 # List of paths
 country_codes = ['ESP', 'EST', 'ETH', 'USA']
-dem_names = ['AW3D30', 'HydroSHEDS', 'MERIT', 'NASADEM', 'TanDEM']
+dem_names = ['AW3D30', 'COP30', 'HydroSHEDS', 'MERIT', 'NASADEM', 'TanDEM']
 feature_types = ['basin', 'stream']
 paths = []
 for country_code in country_codes:
